@@ -1,0 +1,42 @@
+{
+  "name": "farapayamak/laravel",
+  "description": "Official Farapayamak SOAP package for Laravel - Full 8 web services with OTP support",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Amir Rajabzadeh",
+      "email": "amir.irdev@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.4|^8.0|^8.1|^8.2|^8.3|^8.4",
+    "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+    "ext-soap": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Farapayamak\\Laravel\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Farapayamak\\Laravel\\FaraPayamakServiceProvider"
+      ],
+      "aliases": {
+        "FaraPayamak": "Farapayamak\\Laravel\\Facades\\FaraPayamak",
+        "FaraPayamakSend": "Farapayamak\\Laravel\\Facades\\FaraPayamakSend",
+        "FaraPayamakReceive": "Farapayamak\\Laravel\\Facades\\FaraPayamakReceive",
+        "FaraPayamakContacts": "Farapayamak\\Laravel\\Facades\\FaraPayamakContacts",
+        "FaraPayamakSchedule": "Farapayamak\\Laravel\\Facades\\FaraPayamakSchedule",
+        "FaraPayamakActions": "Farapayamak\\Laravel\\Facades\\FaraPayamakActions",
+        "FaraPayamakVoice": "Farapayamak\\Laravel\\Facades\\FaraPayamakVoice",
+        "FaraPayamakUsers": "Farapayamak\\Laravel\\Facades\\FaraPayamakUsers",
+        "FaraPayamakTickets": "Farapayamak\\Laravel\\Facades\\FaraPayamakTickets"
+      }
+    }
+  },
+  "minimum-stability": "stable"
+}
