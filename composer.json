@@ -17,24 +17,24 @@
   },
   "autoload": {
     "psr-4": {
-      "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\": "src/"
+      "Amirrajabzadeh\\FarapayamakLaravel\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\FaraPayamakServiceProvider"
+        "Amirrajabzadeh\\FarapayamakLaravel\\FaraPayamakServiceProvider"
       ],
       "aliases": {
-        "FaraPayamak": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamak",
-        "FaraPayamakSend": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakSend",
-        "FaraPayamakReceive": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakReceive",
-        "FaraPayamakContacts": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakContacts",
-        "FaraPayamakSchedule": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakSchedule",
-        "FaraPayamakActions": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakActions",
-        "FaraPayamakVoice": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakVoice",
-        "FaraPayamakUsers": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakUsers",
-        "FaraPayamakTickets": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakTickets"
+        "FaraPayamak": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamak",
+        "FaraPayamakSend": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakSend",
+        "FaraPayamakReceive": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakReceive",
+        "FaraPayamakContacts": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakContacts",
+        "FaraPayamakSchedule": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakSchedule",
+        "FaraPayamakActions": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakActions",
+        "FaraPayamakVoice": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakVoice",
+        "FaraPayamakUsers": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakUsers",
+        "FaraPayamakTickets": "Amirrajabzadeh\\FarapayamakLaravel\\Facades\\FaraPayamakTickets"
       }
     }
   },
