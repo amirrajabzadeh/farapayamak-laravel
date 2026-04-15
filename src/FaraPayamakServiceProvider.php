@@ -1,16 +1,16 @@
 <?php
 
-namespace Farapayamak\Laravel;
+namespace Amirrajabzadeh\FarapayamakLaravel;
 
 use Illuminate\Support\ServiceProvider;
-use Farapayamak\Laravel\Services\SendService;
-use Farapayamak\Laravel\Services\ReceiveService;
-use Farapayamak\Laravel\Services\ContactsService;
-use Farapayamak\Laravel\Services\ScheduleService;
-use Farapayamak\Laravel\Services\ActionsService;
-use Farapayamak\Laravel\Services\VoiceService;
-use Farapayamak\Laravel\Services\UsersService;
-use Farapayamak\Laravel\Services\TicketsService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\SendService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\ReceiveService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\ContactsService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\ScheduleService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\ActionsService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\VoiceService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\UsersService;
+use Amirrajabzadeh\FarapayamakLaravel\Services\TicketsService;
 
 class FaraPayamakServiceProvider extends ServiceProvider
 {

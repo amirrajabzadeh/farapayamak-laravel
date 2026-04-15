@@ -1,5 +1,5 @@
 {
-  "name": "farapayamak/laravel",
+  "name": "amirrajabzadeh/farapayamak-laravel",
   "description": "Official Farapayamak SOAP package for Laravel - Full 8 web services with OTP support",
   "type": "library",
   "license": "MIT",
@@ -17,24 +17,24 @@
   },
   "autoload": {
     "psr-4": {
-      "Farapayamak\\Laravel\\": "src/"
+      "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Farapayamak\\Laravel\\FaraPayamakServiceProvider"
+        "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\FaraPayamakServiceProvider"
       ],
       "aliases": {
-        "FaraPayamak": "Farapayamak\\Laravel\\Facades\\FaraPayamak",
-        "FaraPayamakSend": "Farapayamak\\Laravel\\Facades\\FaraPayamakSend",
-        "FaraPayamakReceive": "Farapayamak\\Laravel\\Facades\\FaraPayamakReceive",
-        "FaraPayamakContacts": "Farapayamak\\Laravel\\Facades\\FaraPayamakContacts",
-        "FaraPayamakSchedule": "Farapayamak\\Laravel\\Facades\\FaraPayamakSchedule",
-        "FaraPayamakActions": "Farapayamak\\Laravel\\Facades\\FaraPayamakActions",
-        "FaraPayamakVoice": "Farapayamak\\Laravel\\Facades\\FaraPayamakVoice",
-        "FaraPayamakUsers": "Farapayamak\\Laravel\\Facades\\FaraPayamakUsers",
-        "FaraPayamakTickets": "Farapayamak\\Laravel\\Facades\\FaraPayamakTickets"
+        "FaraPayamak": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamak",
+        "FaraPayamakSend": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakSend",
+        "FaraPayamakReceive": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakReceive",
+        "FaraPayamakContacts": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakContacts",
+        "FaraPayamakSchedule": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakSchedule",
+        "FaraPayamakActions": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakActions",
+        "FaraPayamakVoice": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakVoice",
+        "FaraPayamakUsers": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakUsers",
+        "FaraPayamakTickets": "Amirrajabzadeh\\FarapayamakLaravel\\Laravel\\Facades\\FaraPayamakTickets"
       }
     }
   },

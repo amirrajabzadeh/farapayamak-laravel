@@ -1,6 +1,6 @@
 <?php
 
-namespace Farapayamak\Laravel\Facades;
+namespace Amirrajabzadeh\FarapayamakLaravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

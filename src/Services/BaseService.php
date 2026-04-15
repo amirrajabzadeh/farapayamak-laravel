@@ -1,6 +1,6 @@
 <?php
 
-namespace Farapayamak\Laravel\Services;
+namespace Amirrajabzadeh\FarapayamakLaravel\Services;
 
 use SoapClient;
 use SoapFault;
