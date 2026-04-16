@@ -35,19 +35,15 @@ class SendService extends BaseService
     public function sendSimpleSms($to, $from, $text, $isFlash = false)
     {
         try {
-            if (is_array($to)) {
-                $toArray = array_map('strval', $to);
-            } else {
-                $toArray = [(string)$to];
-            }
+            $toArray = is_array($to) ? array_map('strval', $to) : [(string)$to];
 
             $params = [
                 'username' => $this->username,
                 'password' => $this->password,
                 'to'       => $toArray,
-                'from'     => $from,
-                'text'     => $text,
-                'isflash'  => $isFlash
+                'from'     => (string)$from,
+                'text'     => (string)$text,
+                'isflash'  => (bool)$isFlash
             ];
 
             $result = $this->client->SendSimpleSMS2($params);
