@@ -10,7 +10,7 @@ use SoapFault;
  * این کلاس شامل تمام متدهای مربوط به ارسال پیامک، OTP،
  * دریافت اعتبار، وضعیت تحویل و ... می‌باشد
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @package Amirrajabzadeh\FarapayamakLaravel\Services
  */
 class SendService extends BaseService
@@ -55,6 +55,11 @@ class SendService extends BaseService
         400 => 'در لیست ارسال',
         500 => 'عدم پذیرش',
     ];
+
+    /**
+     * متن اضافه شده به انتهای پیام (الزامی برای وب سرویس فراپیامک)
+     */
+    protected const REQUIRED_SUFFIX = "\nلغو11";
 
     /**
      * ساخت پاسخ استاندارد برای موفقیت
@@ -113,45 +118,69 @@ class SendService extends BaseService
     }
 
     /**
+     * اضافه کردن "لغو11" به انتهای متن پیام (در خط جدید)
+     *
+     * @param string $text متن اصلی پیام
+     * @return string متن با افزودن لغو11
+     */
+    protected function addRequiredSuffix(string $text): string
+    {
+        // حذف لغو11 قبلی اگر وجود داشته باشد
+        $cleanText = preg_replace('/\n?لغو11$/', '', $text);
+
+        // اضافه کردن لغو11 در خط جدید
+        return $cleanText . self::REQUIRED_SUFFIX;
+    }
+
+    /**
      * ارسال پیامک ساده به یک گیرنده (نسخه 2 - پیشنهادی)
      *
      * طبق مستندات رسمی، در متد SendSimpleSMS2 پارامتر to از نوع String است
+     * همچنین به صورت خودکار "لغو11" به انتهای پیام اضافه می‌شود
      *
      * @param string $to شماره گیرنده (فقط یک شماره)
      * @param string $from شماره فرستنده (ثبت شده در پنل)
      * @param string $text متن پیامک
      * @param bool $isFlash ارسال فلش (true/false)
      * @return array آرایه استاندارد شامل success, message, data, code, raw
-     *
-     * مثال خروجی موفق:
-     * [
-     *     'success' => true,
-     *     'message' => 'پیامک با موفقیت ارسال شد',
-     *     'data' => 18,
-     *     'code' => null,
-     *     'raw' => '18'
-     * ]
      */
     public function sendSimpleSms(string $to, string $from, string $text, bool $isFlash = false): array
     {
         try {
+            // اضافه کردن "لغو11" به انتهای پیام
+            $finalText = $this->addRequiredSuffix($text);
+
             $params = [
                 'username' => $this->username,
                 'password' => $this->password,
                 'to'       => $to,
                 'from'     => $from,
-                'text'     => $text,
+                'text'     => $finalText,
                 'isflash'  => $isFlash
             ];
 
             $result = $this->client->SendSimpleSMS2($params);
             $rawResult = $result->SendSimpleSMS2Result;
 
-            // بررسی موفقیت (کد مثبت یعنی RecId معتبر)
-            if (is_numeric($rawResult) && $rawResult > 0) {
+            // تشخیص موفقیت واقعی:
+            // 1. عدد باشد
+            // 2. بزرگتر از 1000 باشد (RecId واقعی)
+            // 3. در آرایه ERROR_MESSAGES کلید نباشد
+            $isRealSuccess = is_numeric($rawResult) && $rawResult > 1000 && !isset(self::ERROR_MESSAGES[(int)$rawResult]);
+
+            if ($isRealSuccess) {
                 return $this->successResponse(
                     (int)$rawResult,
                     'پیامک با موفقیت ارسال شد',
+                    $rawResult
+                );
+            }
+
+            // کد 1 معنای خاصی دارد ("درخواست موفق" ولی RecId نیست)
+            if ($rawResult == 1) {
+                return $this->successResponse(
+                    null,
+                    'درخواست ارسال با موفقیت ثبت شد (دریافت شناسه پیامک ممکن نیست)',
                     $rawResult
                 );
             }
@@ -180,6 +209,9 @@ class SendService extends BaseService
     public function sendSimpleSmsToMultiple(array $to, string $from, string $text, bool $isFlash = false): array
     {
         try {
+            // اضافه کردن "لغو11" به انتهای پیام
+            $finalText = $this->addRequiredSuffix($text);
+
             // تبدیل به آرایه از رشته‌ها
             $toArray = array_map('strval', $to);
 
@@ -193,17 +225,27 @@ class SendService extends BaseService
                 'password' => $this->password,
                 'to'       => $toArray,
                 'from'     => $from,
-                'text'     => $text,
+                'text'     => $finalText,
                 'isflash'  => $isFlash
             ];
 
             $result = $this->client->SendSimpleSMS($params);
             $rawResult = $result->SendSimpleSMSResult;
 
-            if (is_numeric($rawResult) && $rawResult > 0) {
+            $isRealSuccess = is_numeric($rawResult) && $rawResult > 1000 && !isset(self::ERROR_MESSAGES[(int)$rawResult]);
+
+            if ($isRealSuccess) {
                 return $this->successResponse(
                     (int)$rawResult,
                     'پیامک با موفقیت ارسال شد',
+                    $rawResult
+                );
+            }
+
+            if ($rawResult == 1) {
+                return $this->successResponse(
+                    null,
+                    'درخواست ارسال با موفقیت ثبت شد (دریافت شناسه پیامک ممکن نیست)',
                     $rawResult
                 );
             }
@@ -223,9 +265,6 @@ class SendService extends BaseService
      * @param string $from شماره فرستنده (اختیاری - می تواند خالی باشد)
      * @param int $code کد تأیید عددی (مثلاً 123456)
      * @return array آرایه استاندارد
-     *
-     * مثال:
-     * $result = $sendService->sendOtp('09123456789', '5000xxx', 123456);
      */
     public function sendOtp(string $to, string $from, int $code): array
     {
@@ -241,8 +280,10 @@ class SendService extends BaseService
             $result = $this->client->SendOtp($params);
             $rawResult = $result->SendOtpResult;
 
-            // بررسی موفقیت (اگر عددی و بزرگتر از 0 باشد)
-            if (is_numeric($rawResult) && $rawResult > 0) {
+            // OTP معمولاً RecId بزرگ برمی‌گرداند
+            $isRealSuccess = is_numeric($rawResult) && $rawResult > 1000 && !isset(self::ERROR_MESSAGES[(int)$rawResult]);
+
+            if ($isRealSuccess) {
                 return $this->successResponse(
                     (string)$rawResult,
                     'کد تأیید با موفقیت ارسال شد',
@@ -250,7 +291,14 @@ class SendService extends BaseService
                 );
             }
 
-            // بررسی کد خطا
+            if ($rawResult == 1) {
+                return $this->successResponse(
+                    null,
+                    'درخواست ارسال کد تأیید با موفقیت ثبت شد',
+                    $rawResult
+                );
+            }
+
             $code = is_numeric($rawResult) ? (int)$rawResult : 0;
             return $this->errorResponse($code, null, $rawResult);
 
@@ -270,10 +318,13 @@ class SendService extends BaseService
     public function sendByBaseNumber(string $text, string $to, int $bodyId): array
     {
         try {
+            // اضافه کردن "لغو11" به انتهای پیام
+            $finalText = $this->addRequiredSuffix($text);
+
             $params = [
                 'username' => $this->username,
                 'password' => $this->password,
-                'text'     => $text,
+                'text'     => $finalText,
                 'to'       => $to,
                 'bodyId'   => $bodyId
             ];
@@ -281,10 +332,20 @@ class SendService extends BaseService
             $result = $this->client->SendByBaseNumber($params);
             $rawResult = $result->SendByBaseNumberResult;
 
-            if (is_numeric($rawResult) && $rawResult > 0) {
+            $isRealSuccess = is_numeric($rawResult) && $rawResult > 1000 && !isset(self::ERROR_MESSAGES[(int)$rawResult]);
+
+            if ($isRealSuccess) {
                 return $this->successResponse(
                     (int)$rawResult,
                     'پیامک با موفقیت ارسال شد',
+                    $rawResult
+                );
+            }
+
+            if ($rawResult == 1) {
+                return $this->successResponse(
+                    null,
+                    'درخواست ارسال با موفقیت ثبت شد',
                     $rawResult
                 );
             }
@@ -308,10 +369,13 @@ class SendService extends BaseService
     public function sendByBaseNumber2(string $text, string $to, int $bodyId): array
     {
         try {
+            // اضافه کردن "لغو11" به انتهای پیام
+            $finalText = $this->addRequiredSuffix($text);
+
             $params = [
                 'username' => $this->username,
                 'password' => $this->password,
-                'text'     => $text,
+                'text'     => $finalText,
                 'to'       => $to,
                 'bodyId'   => $bodyId
             ];
@@ -319,10 +383,20 @@ class SendService extends BaseService
             $result = $this->client->SendByBaseNumber2($params);
             $rawResult = $result->SendByBaseNumber2Result;
 
-            if (is_numeric($rawResult) && $rawResult > 0) {
+            $isRealSuccess = is_numeric($rawResult) && $rawResult > 1000 && !isset(self::ERROR_MESSAGES[(int)$rawResult]);
+
+            if ($isRealSuccess) {
                 return $this->successResponse(
                     (int)$rawResult,
                     'پیامک با موفقیت ارسال شد',
+                    $rawResult
+                );
+            }
+
+            if ($rawResult == 1) {
+                return $this->successResponse(
+                    null,
+                    'درخواست ارسال با موفقیت ثبت شد',
                     $rawResult
                 );
             }
@@ -339,15 +413,6 @@ class SendService extends BaseService
      * دریافت اعتبار باقی‌مانده حساب
      *
      * @return array آرایه استاندارد
-     *
-     * مثال خروجی موفق:
-     * [
-     *     'success' => true,
-     *     'message' => 'اعتبار شما 10270 ریال است',
-     *     'data' => 10270.95,
-     *     'code' => null,
-     *     'raw' => 10270.958169017
-     * ]
      */
     public function getCredit(): array
     {
@@ -382,15 +447,6 @@ class SendService extends BaseService
      *
      * @param int $recId شناسه پیامک
      * @return array آرایه استاندارد
-     *
-     * مثال خروجی موفق:
-     * [
-     *     'success' => true,
-     *     'message' => 'رسیده به گوشی',
-     *     'data' => 1,
-     *     'code' => null,
-     *     'raw' => 1
-     * ]
      */
     public function getDeliveryStatus(int $recId): array
     {
