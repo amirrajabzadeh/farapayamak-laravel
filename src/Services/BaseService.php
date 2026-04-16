@@ -9,7 +9,7 @@ use Exception;
 /**
  * کلاس پایه برای تمام سرویس‌های فراپیامک
  *
- * @package Farapayamak\Laravel\Services
+ * @package Amirrajabzadeh\FarapayamakLaravel\Services
  */
 abstract class BaseService
 {
@@ -55,12 +55,15 @@ abstract class BaseService
         $this->debug = $debug;
         $this->timeout = $timeout;
 
+        // بررسی وجود ثابت WSDL_CACHE_NONE
+        $wsdlCache = defined('WSDL_CACHE_NONE') ? WSDL_CACHE_NONE : 0;
+
         $options = [
             'encoding' => 'UTF-8',
             'trace' => $debug,
             'exceptions' => true,
             'connection_timeout' => $timeout,
-            'cache_wsdl' => WSDL_CACHE_NONE
+            'cache_wsdl' => $wsdlCache
         ];
 
         try {
