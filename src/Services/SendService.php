@@ -35,7 +35,11 @@ class SendService extends BaseService
     public function sendSimpleSms($to, $from, $text, $isFlash = false)
     {
         try {
-            $toArray = is_array($to) ? $to : [$to];
+            if (is_array($to)) {
+                $toArray = array_map('strval', $to);
+            } else {
+                $toArray = [(string)$to];
+            }
 
             $params = [
                 'username' => $this->username,
@@ -66,7 +70,11 @@ class SendService extends BaseService
     public function sendSimpleSmsV1($to, $from, $text, $isFlash = false)
     {
         try {
-            $toArray = is_array($to) ? $to : [$to];
+            if (is_array($to)) {
+                $toArray = array_map('strval', $to);
+            } else {
+                $toArray = [(string)$to];
+            }
 
             $params = [
                 'username' => $this->username,
